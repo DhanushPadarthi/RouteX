@@ -1,12 +1,26 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+import { environment } from './services/environment';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'mentibymaps';
+export class AppComponent implements OnInit {
+
+  constructor(
+    private router: Router,
+    private renderer: Renderer2  // Inject Renderer2
+  ) {}
+
+  ngOnInit() {
+    
+  }
+
+  toggletoLogin() {
+    this.router.navigate(['/login']);
+  }
+
 }

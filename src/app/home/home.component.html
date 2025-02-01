@@ -1,0 +1,65 @@
+<div class="pagination-container">
+    <label for="rowsPerPage">Rows per page:</label>
+    <input
+      type="number"
+      id="rowsPerPage"
+      [(ngModel)]="rowsPerPage"
+      min="1"
+      (change)="updatePagination()"
+    />
+  
+    <label for="rowsPerUser">Rows per user:</label>
+    <input
+      type="number"
+      id="rowsPerUser"
+      [(ngModel)]="rowsPerUser"
+      min="1"
+      (change)="updatePagination()"
+    />
+  
+    <!-- Table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Date</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Map Type</th>
+          <th>Image</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Display rows for the current page -->
+        <ng-container *ngFor="let user of paginatedData">
+          <tr *ngFor="let location of user.filteredLocations; let i = index">
+            <td *ngIf="i === 0" [attr.rowspan]="user.filteredLocations.length">
+              {{ user.userName }}
+            </td>
+            <td>{{ user.date }}</td>
+            <td>{{ location.startLocation }}</td>
+            <td>{{ location.endLocation }}</td>
+            <td>{{location.maptype}}</td>
+            <td>
+              <iframe
+                width="150"
+                height="100"
+                frameborder="0"
+                style="border:0"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPy9xoCiIHtNBp4PUQBsrlkMLvCqgz24sXkg&s"
+                allowfullscreen
+              ></iframe>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button [disabled]="currentPage === 1" (click)="previousPage()">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
+    </div>
+  </div>
+  

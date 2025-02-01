@@ -1,0 +1,68 @@
+<div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img
+          src="https://media.licdn.com/dms/image/v2/D560BAQEdDXUwAZKsGg/company-logo_100_100/company-logo_100_100/0/1735565244488/menti_by_logo?e=1745452800&v=beta&t=gmxxa7Gk0PqhXwkAmVwR9S5eYMMc3pBVqwsLAAJCMH4"
+          alt="Mentiby Logo"
+          class="logo-image"
+        />
+        <h1 class="app-title">Mentiby Maps</h1>
+      </div>
+      <div class="auth">
+        <button (click)="toggletoLogin()" class="login-button">Login</button>
+      </div>
+    </header>
+  
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="content-wrapper">
+        <h2>Sign-Up</h2>
+        <form action="#" method="POST">
+          <div class="input-field">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              [(ngModel)]="username"
+              placeholder="Enter your username"
+              required
+            />
+          </div>
+          <div class="input-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+  
+          <div class="input-field">
+            <label for="confirm-password">Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              [(ngModel)]="confirmpassword"
+              placeholder="ReEnter your password"
+              required
+            />
+          </div>
+          <div class="login-buttons">
+            <button type="submit" (click)="signup()" class="login-btn">Sign-Up</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 Mentiby Maps. All Rights Reserved.</p>
+    </footer>
+  </div>
+  
