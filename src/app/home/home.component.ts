@@ -61,9 +61,9 @@ export class HomeComponent implements OnInit{
       error : (error:any) => {
         alert(error.error.error)
       }
-
     })
   }
+
 
 
   updatePagination(): void {

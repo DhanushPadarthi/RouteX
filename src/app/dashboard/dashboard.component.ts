@@ -30,4 +30,8 @@ export class DashboardComponent {
   toggletoMap() {
     this.router.navigate(['/dashboard/map'])
   }
+
+  toggletoAnalytics(){
+    this.router.navigate(['/dashboard/analytics'])
+  }
 }

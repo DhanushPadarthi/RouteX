@@ -1,0 +1,44 @@
+<!-- <div class="map-container">
+  <div id="map" style="height: 80vh; width: 100%;"></div>
+  
+  <button (click)="toggleTable()" class="toggle-btn">
+    {{ showTable ? 'Hide Cords' : 'Show Cords' }}
+  </button>
+
+
+  
+</div> -->
+
+
+
+<div class="map-container">
+  <div id="map" style="height: 80vh; width: 100%;"></div>
+
+  <button (click)="toggleTable()" class="toggle-btn">
+    {{ showTable ? 'Hide Cords' : 'Show Cords' }}
+  </button>
+
+  <!-- Floating resizable window -->
+  <div class="floating-window" *ngIf="showTable">
+    <div class="window-header">
+      <span>Coordinates Table</span>
+      <button (click)="toggleTable()">X</button>
+    </div>
+    <div class="window-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let coord of allCoordinates">
+            <td>{{ coord.lat }}</td>
+            <td>{{ coord.lng }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
