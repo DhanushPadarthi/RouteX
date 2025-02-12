@@ -39,10 +39,6 @@ export class GoogleMapComponent implements OnInit {
 
   }
 
-
-
-
-
   getCoordinatesInsideCircle(): void {
     if (!this.circle || !this.map) return;
 
@@ -115,4 +111,5 @@ export class GoogleMapComponent implements OnInit {
       alert('Please enter both start and destination locations.');
     }
   }
+  
 }

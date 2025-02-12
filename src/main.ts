@@ -25,8 +25,8 @@ import { AnalyticsComponent } from './app/analytics/analytics.component';
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent }, // Default dashboard content
       { path: 'map', component: MapComponent }, // Map route
-      { path: 'google-maps', component: GoogleMapComponent }, // Map route
-      { path: 'analytics', component: AnalyticsComponent }, // Map route
+      { path: 'google-maps', component: GoogleMapComponent }, // G-Map route
+      { path: 'analytics', component: AnalyticsComponent }, 
     ]
   }
 ];
