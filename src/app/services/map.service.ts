@@ -1,12 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
   private apiUrl:string = 'http://localhost:3000'; // Replace with your actual API URL
+
+  // private locationSource = new BehaviorSubject<{ start: string, end: string } | null>(null);
+  // location$ = this.locationSource.asObservable();
+
+  // setLocation(start: string, end: string) {
+  //   this.locationSource.next({ start, end });
+  //   console.log(this.locationSource.getValue())
+  // }
+
+  // getLocation() {
+  //   return this.locationSource.getValue();  // Get latest value
+  // }
+  
 
   constructor(private http: HttpClient) { }
   sethistory(start: string, end: string, maptype : string, username : string): Observable<any> {

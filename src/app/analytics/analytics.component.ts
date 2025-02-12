@@ -104,6 +104,10 @@ export class AnalyticsComponent implements OnInit {
   
     await this.processInBatches(coordinates, 5); 
     this.isLoading = false;
+
+
+
+  
   }
   
   async processInBatches(coords: { lat: number; lng: number }[], batchSize: number) {
@@ -118,14 +122,18 @@ export class AnalyticsComponent implements OnInit {
   
   fetchPlaceName(lat: number, lng: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      const url = `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`;
+      let url = `https://photon.komoot.io/reverse?lat=${lat}&lon=${lng}`;
+      url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+
+      
   
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          if (data && data.features && data.features.length > 0) {
-            const placeName = data.features[0].properties.name || "Unknown";
-            this.allCoordinates.push({ lat, lng, placeName });
+          if (data && data.display_name && data.display_name!='') {
+            const placeName = data.display_name || "Unknown";
+            const importance = data.importance;
+            this.allCoordinates.push({ lat, lng, placeName, importance });
           }
           resolve();
         })

@@ -1,8 +1,9 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { MapService } from '../services/map.service';
 import { HttpClientModule } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +13,7 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit{
+
   // userQueries = [
   //   {
   //     username: 'John Doe',
@@ -41,15 +43,12 @@ export class HomeComponent implements OnInit{
   paginatedData : any= [];
   totalPages = 1;
 
-  constructor(private mapservice : MapService) {
+  constructor(private mapservice : MapService, private router : Router, private cdRef: ChangeDetectorRef) {
     this.fetchBackend()
   }
 
   ngOnInit(): void {
   }
-
-  
-
 
   async fetchBackend(){
     this.mapservice.getfullhistory().subscribe({
@@ -64,6 +63,15 @@ export class HomeComponent implements OnInit{
     })
   }
 
+
+  onIframeClick(startLocation: string, endLocation: string, maptype : string) {
+    if(maptype=='GoogleMap'){
+      this.router.navigate(['/dashboard/google-map', startLocation, endLocation]);
+    }else{
+      // this.mapservice.setLocation(startLocation, endLocation);
+      this.router.navigate(['/dashboard/map', startLocation, endLocation]);
+    }
+  }
 
 
   updatePagination(): void {
@@ -91,4 +99,7 @@ export class HomeComponent implements OnInit{
       this.updatePagination();
     }
   }
+
+
+  
 }
