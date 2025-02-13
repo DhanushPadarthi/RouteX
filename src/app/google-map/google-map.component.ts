@@ -12,6 +12,15 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './google-map.component.css',
 })
 export class GoogleMapComponent implements OnInit {
+updateRoutePreference(arg0: string) {
+throw new Error('Method not implemented.');
+}
+calculateRoute() {
+throw new Error('Method not implemented.');
+}
+updateTravelMode(arg0: string) {
+throw new Error('Method not implemented.');
+}
   map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService | undefined;
   directionsRenderer: google.maps.DirectionsRenderer | undefined;
@@ -19,11 +28,15 @@ export class GoogleMapComponent implements OnInit {
   userMarker: google.maps.Marker | undefined;
   outerCircle: google.maps.Circle | undefined;
   radarWaves: google.maps.Circle[] = [];
-
+  
   startLocation: string = '';
   destinationLocation: string = '';
+
   selectedTravelMode: google.maps.TravelMode = google.maps.TravelMode.DRIVING;
   routePreference: { avoidTolls?: boolean; avoidHighways?: boolean } = {};
+
+  circle: google.maps.Circle | undefined;
+  allCoordinates: google.maps.LatLng[] = [];
 
   constructor(private mapservice: MapService) {}
 
@@ -64,39 +77,37 @@ export class GoogleMapComponent implements OnInit {
           this.startRadarEffect();
         },
         (error) => {
-          console.error("Error getting location:", error);
-          alert("Location access denied. Enable it to set your start location.");
+          console.error('Error getting location:', error);
+          alert('Location access denied. Enable it to set your start location.');
         }
       );
     } else {
-      alert("Geolocation is not supported by this browser.");
+      alert('Geolocation is not supported by this browser.');
     }
   }
 
   drawUserMarker(): void {
     if (!this.userLocation || !this.map) return;
 
-    // Small thick blue circle (Main Marker)
     this.userMarker = new google.maps.Marker({
       position: this.userLocation,
       map: this.map,
-      title: "Current Location",
+      title: 'Current Location',
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: 8, 
-        fillColor: "#0000FF",
+        scale: 8,
+        fillColor: '#0000FF',
         fillOpacity: 1,
         strokeWeight: 2,
-        strokeColor: "#FFFFFF",
+        strokeColor: '#FFFFFF',
       },
     });
 
-    // Outer Light Blue Circle
     this.outerCircle = new google.maps.Circle({
-      strokeColor: "#00BFFF",
+      strokeColor: '#00BFFF',
       strokeOpacity: 0.5,
       strokeWeight: 1,
-      fillColor: "#00BFFF",
+      fillColor: '#00BFFF',
       fillOpacity: 0.2,
       map: this.map,
       center: this.userLocation,
@@ -112,10 +123,10 @@ export class GoogleMapComponent implements OnInit {
 
     setInterval(() => {
       const radarWave = new google.maps.Circle({
-        strokeColor: "#0000FF",
+        strokeColor: '#0000FF',
         strokeOpacity: 0.8,
         strokeWeight: 2,
-        fillColor: "#0000FF",
+        fillColor: '#0000FF',
         fillOpacity: 0.3,
         map: this.map,
         center: this.userLocation,
@@ -138,52 +149,22 @@ export class GoogleMapComponent implements OnInit {
     }, waveDuration);
   }
 
-  calculateRoute(): void {
-    if (this.startLocation && this.destinationLocation) {
-      const currentUserName: any = localStorage.getItem('username');
+  getCoordinatesInsideCircle(): void {
+    if (!this.circle || !this.map) return;
 
-      this.mapservice.sethistory(this.startLocation, this.destinationLocation, 'GoogleMap', currentUserName).subscribe({
-        next: () => alert('Data saved successfully'),
-        error: (error: any) => {
-          console.error('Setting record failed:', error);
-          alert('Invalid arguments. Please try again.');
-        },
-      });
+    const bounds = this.circle.getBounds();
+    if (!bounds) return;
 
-      const request: google.maps.DirectionsRequest = {
-        origin: this.startLocation,
-        destination: this.destinationLocation,
-        travelMode: this.selectedTravelMode,
-        provideRouteAlternatives: true,
-        avoidTolls: this.routePreference.avoidTolls || false,
-        avoidHighways: this.routePreference.avoidHighways || false,
-      };
+    this.allCoordinates = [];
 
-      this.directionsService?.route(request, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK && result) {
-          this.directionsRenderer?.setDirections(result);
-        } else {
-          alert('Unable to find the route. Please check the locations.');
+    for (let lat = bounds.getSouthWest().lat(); lat <= bounds.getNorthEast().lat(); lat += 0.01) {
+      for (let lng = bounds.getSouthWest().lng(); lng <= bounds.getNorthEast().lng(); lng += 0.01) {
+        const point = new google.maps.LatLng(lat, lng);
+        if (google.maps.geometry.spherical.computeDistanceBetween(point, this.circle.getCenter()!) <= this.circle.getRadius()) {
+          this.allCoordinates.push(point);
         }
-      });
-
-      // Keep radar effect even after clicking "Get Route"
-      this.startRadarEffect();
-    } else {
-      alert('Please enter both start and destination locations.');
+      }
     }
-  }
-
-  updateTravelMode(selectedMode: string): void {
-    this.selectedTravelMode = google.maps.TravelMode[selectedMode as keyof typeof google.maps.TravelMode];
-    this.calculateRoute(); 
-  }
-
-  updateRoutePreference(option: string): void {
-    this.routePreference = {
-      avoidTolls: option === 'avoidTolls',
-      avoidHighways: option === 'avoidHighways',
-    };
-    this.calculateRoute(); 
+    console.log('Coordinates inside the circle:', this.allCoordinates);
   }
 }

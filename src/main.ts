@@ -11,6 +11,7 @@ import { Map } from 'leaflet';
 import { GoogleMapComponent } from './app/google-map/google-map.component';
 import { HomeComponent } from './app/home/home.component';
 import { AuthGuard } from './app/auth.guard';
+import { AnalyticsComponent } from './app/analytics/analytics.component';
 
 
  const routes: Routes = [
@@ -24,7 +25,8 @@ import { AuthGuard } from './app/auth.guard';
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent }, // Default dashboard content
       { path: 'map', component: MapComponent }, // Map route
-      { path: 'google-maps', component: GoogleMapComponent }, // Map route
+      { path: 'google-maps', component: GoogleMapComponent }, // G-Map route
+      { path: 'analytics', component: AnalyticsComponent }, 
     ]
   }
 ];
