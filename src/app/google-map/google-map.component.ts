@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MapService } from '../services/map.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-google-map',
@@ -12,15 +13,6 @@ import { HttpClientModule } from '@angular/common/http';
   styleUrl: './google-map.component.css',
 })
 export class GoogleMapComponent implements OnInit {
-updateRoutePreference(arg0: string) {
-throw new Error('Method not implemented.');
-}
-calculateRoute() {
-throw new Error('Method not implemented.');
-}
-updateTravelMode(arg0: string) {
-throw new Error('Method not implemented.');
-}
   map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService | undefined;
   directionsRenderer: google.maps.DirectionsRenderer | undefined;
@@ -28,21 +20,22 @@ throw new Error('Method not implemented.');
   userMarker: google.maps.Marker | undefined;
   outerCircle: google.maps.Circle | undefined;
   radarWaves: google.maps.Circle[] = [];
-  
+
   startLocation: string = '';
   destinationLocation: string = '';
-
   selectedTravelMode: google.maps.TravelMode = google.maps.TravelMode.DRIVING;
   routePreference: { avoidTolls?: boolean; avoidHighways?: boolean } = {};
 
-  circle: google.maps.Circle | undefined;
-  allCoordinates: google.maps.LatLng[] = [];
+  startMarker: google.maps.Marker | undefined;
+  destinationMarker: google.maps.Marker | undefined;
+  startCircle: google.maps.Circle | undefined;
+  destinationCircle: google.maps.Circle | undefined;
 
-  constructor(private mapservice: MapService) {}
+  constructor(private mapservice: MapService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.map = new google.maps.Map(document.getElementById('map') as HTMLElement, {
-      center: { lat: 37.7749, lng: -122.4194 }, // Default: San Francisco
+      center: { lat: 37.7749, lng: -122.4194 },
       zoom: 13,
     });
 
@@ -51,6 +44,20 @@ throw new Error('Method not implemented.');
     this.directionsRenderer.setMap(this.map);
 
     this.getUserLocation();
+
+    // Update marker effects based on zoom
+    this.map.addListener('zoom_changed', () => {
+      this.updateCyberEffects();
+    });
+
+    // Check if parameters exist
+    this.route.params.subscribe((params) => {
+      if (params['startLocation'] && params['endLocation']) {
+        this.startLocation = params['startLocation'];
+        this.destinationLocation = params['endLocation'];
+        this.calculateRoute();
+      }
+    });
   }
 
   getUserLocation(): void {
@@ -149,22 +156,83 @@ throw new Error('Method not implemented.');
     }, waveDuration);
   }
 
-  getCoordinatesInsideCircle(): void {
-    if (!this.circle || !this.map) return;
+  calculateRoute(): void {
+    if (this.startLocation && this.destinationLocation) {
+      const currentUserName: any = localStorage.getItem('username');
 
-    const bounds = this.circle.getBounds();
-    if (!bounds) return;
+      this.mapservice
+        .sethistory(this.startLocation, this.destinationLocation, 'GoogleMap', currentUserName)
+        .subscribe({
+          next: () => alert('Data saved successfully'),
+          error: () => alert('Invalid arguments. Please try again.'),
+        });
 
-    this.allCoordinates = [];
+      const request: any = {
+        origin: this.startLocation,
+        destination: this.destinationLocation,
+        travelMode: this.selectedTravelMode,
+      };
 
-    for (let lat = bounds.getSouthWest().lat(); lat <= bounds.getNorthEast().lat(); lat += 0.01) {
-      for (let lng = bounds.getSouthWest().lng(); lng <= bounds.getNorthEast().lng(); lng += 0.01) {
-        const point = new google.maps.LatLng(lat, lng);
-        if (google.maps.geometry.spherical.computeDistanceBetween(point, this.circle.getCenter()!) <= this.circle.getRadius()) {
-          this.allCoordinates.push(point);
+      this.directionsService?.route(request, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK && result) {
+          this.directionsRenderer?.setDirections(result);
+
+          this.addCyberMarker(result.routes[0].legs[0].start_location, 'Start');
+          this.addCyberMarker(result.routes[0].legs[0].end_location, 'Destination');
+        } else {
+          alert('Unable to find the route. Please check the locations.');
         }
-      }
+      });
+    } else {
+      alert('Please enter both start and destination locations.');
     }
-    console.log('Coordinates inside the circle:', this.allCoordinates);
+  }
+
+  addCyberMarker(position: google.maps.LatLng, label: string): void {
+    const marker = new google.maps.Marker({
+      position,
+      map: this.map,
+      label,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: '#00FFFF',
+        fillOpacity: 0.8,
+        strokeColor: '#00FFFF',
+        strokeWeight: 2,
+        scale: this.getMarkerSize(),
+      },
+    });
+
+    const circle = new google.maps.Circle({
+      map: this.map,
+      center: position,
+      radius: this.getCircleRadius(),
+      fillColor: '#00FFFF',
+      fillOpacity: 0.1,
+      strokeColor: '#00FFFF',
+      strokeOpacity: 0.5,
+      strokeWeight: 2,
+    });
+
+    if (label === 'Start') {
+      this.startMarker = marker;
+      this.startCircle = circle;
+    } else {
+      this.destinationMarker = marker;
+      this.destinationCircle = circle;
+    }
+  }
+
+  updateCyberEffects(): void {
+    if (this.startCircle) this.startCircle.setRadius(this.getCircleRadius());
+    if (this.destinationCircle) this.destinationCircle.setRadius(this.getCircleRadius());
+  }
+
+  getMarkerSize(): number {
+    return Math.max(4, (this.map?.getZoom() || 10) * 0.8);
+  }
+
+  getCircleRadius(): number {
+    return Math.max(400, (this.map?.getZoom() || 10) * 100);
   }
 }

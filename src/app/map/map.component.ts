@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FormsModule } from '@angular/forms';
 import { MapService } from '../services/map.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-map',
@@ -20,7 +21,7 @@ export class MapComponent implements OnInit {
   destinationLocation: string = '';
   routeLayer: L.LayerGroup | null = null;
 
-  constructor(private mapservice : MapService){
+  constructor(private mapservice : MapService, private route : ActivatedRoute){
 
   }
 
@@ -35,6 +36,18 @@ export class MapComponent implements OnInit {
     setTimeout(() => {
       this.map.invalidateSize();
     }, 0);
+
+
+
+    // Check if parameters exist
+    this.route.params.subscribe(async params => {
+      if (params['startLocation'] && params['endLocation']) {
+        this.startLocation = params['startLocation'];
+        this.destinationLocation = params['endLocation'];
+        await this.calculateRoute();
+      }
+    });
+
   }
 
   async geocode(address: string): Promise<L.LatLng | null> {
