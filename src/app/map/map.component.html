@@ -1,0 +1,26 @@
+<div class="map-container">
+    <!-- Controls Section -->
+    <div class="controls">
+        <label for="start">Start Location:</label>
+        <input
+          id="start"
+          type="text"
+          [(ngModel)]="startLocation"
+          placeholder="Enter start location"
+        />
+    
+        <label for="destination">Destination:</label>
+        <input
+          id="destination"
+          type="text"
+          [(ngModel)]="destinationLocation"
+          placeholder="Enter destination"
+        />
+    
+        <button (click)="calculateRoute()">Get Route</button>
+      </div>
+  
+    <!-- Map Section -->
+    <div id="map" style="height: 80vh; width: 100%;"></div>
+  </div>
+  

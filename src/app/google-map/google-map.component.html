@@ -1,0 +1,28 @@
+<div class="map-container">
+  <div class="controls">
+    <label for="start">Start Location:</label>
+    <input id="start" type="text" [(ngModel)]="startLocation" placeholder="Fetching current location..." />
+
+    <label for="destination">Destination:</label>
+    <input id="destination" type="text" [(ngModel)]="destinationLocation" placeholder="Enter destination" />
+
+    <label for="travelMode">Travel Mode:</label>
+    <select id="travelMode" #mode (change)="updateTravelMode(mode.value)">
+      <option value="DRIVING">Driving</option>
+      <option value="WALKING">Walking</option>
+      <option value="BICYCLING">Bicycling</option>
+      <option value="TRANSIT">Transit</option>
+    </select>
+
+    <label for="routeOptions">Route Preference:</label>
+    <select id="routeOptions" #option (change)="updateRoutePreference(option.value)">
+      <option value="">Default</option>
+      <option value="avoidTolls">Avoid Tolls</option>
+      <option value="avoidHighways">Avoid Highways</option>
+    </select>
+
+    <button (click)="calculateRoute()">Get Route</button>
+  </div>
+
+  <div id="map" style="height: 80vh; width: 100%;"></div>
+</div>

@@ -1,0 +1,68 @@
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<div class="map-container">
+  <div id="map" style="height: 80vh; width: 100%;"></div>
+
+  <button (click)="toggleTable()" class="toggle-btn">
+    {{ showTable ? 'Hide Cords' : 'Show Cords' }}
+  </button>
+
+  <!-- Coordinates Table -->
+  <div class="floating-window" *ngIf="showTable">
+    <div class="window-header">
+      <span>Coordinates Table</span>
+      <button (click)="toggleTable()">X</button>
+    </div>
+    <div class="window-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Place</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="isLoading">
+            <td colspan="3" class="loader-cell">
+              <div class="loader"></div> Loading...
+            </td>
+          </tr>
+          <tr *ngFor="let coord of allCoordinates">
+            <td>{{ coord.lat }}</td>
+            <td>{{ coord.lng }}</td>
+            <td>{{ coord.placeName }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Social Media Floating Window -->
+  <button (click)="toggleSocial()" class="toggle-social-btn">
+    Social
+  </button>
+
+  <div class="social-window" *ngIf="showSocial">
+    <div class="social-header">
+      <button (click)="selectSocial('youtube')">
+        <i class="fab fa-youtube"></i>
+      </button>
+      <button (click)="selectSocial('instagram')">
+        <i class="fab fa-instagram"></i>
+      </button>
+    </div>
+    
+    <div class="social-body">
+      <div *ngIf="selectedSocial === 'youtube'" class="social-content">
+        <p>Latest YouTube News...</p>
+      </div>
+
+      <div *ngIf="selectedSocial === 'instagram'" class="social-content">
+        <p>Latest Instagram News...</p>
+      </div>
+    </div>
+  </div>
+</div>
