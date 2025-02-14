@@ -13,6 +13,12 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './google-map.component.css',
 })
 export class GoogleMapComponent implements OnInit {
+updateRoutePreference(arg0: string) {
+throw new Error('Method not implemented.');
+}
+updateTravelMode(arg0: string) {
+throw new Error('Method not implemented.');
+}
   map: google.maps.Map | undefined;
   directionsService: google.maps.DirectionsService | undefined;
   directionsRenderer: google.maps.DirectionsRenderer | undefined;
